@@ -1,0 +1,29 @@
+.DS_Store
+
+# Bytecode + cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+*.log
+*.pot
+*.py[cod]
+
+.env
+
+media/
+staticfiles/
+
+*.pid
+*.seed
+*.pid.lock
