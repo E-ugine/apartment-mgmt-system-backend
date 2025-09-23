@@ -34,6 +34,9 @@ DEBUG = config('DEBUG', default= False, cast=bool)
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
+AUTH_USER_MODEL = 'accounts.User'
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,7 +50,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'config',
-    'accounts',
+    'accounts'
 ]
 
 MIDDLEWARE = [
@@ -156,7 +159,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField' 
 
-CORS_ALLOWED_ORIGINS = {
+CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://127.0.0.1:3000",
-}
+    "http://127.0.0.1:3000"
+]
