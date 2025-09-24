@@ -27,6 +27,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         attrs.pop('password_confirm', None)    #We remove this since it's not required for user creation
         return attrs
     
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("A user with this email already exists")
+        return value
+
+    
     def create(self, validated_data):
         """
         Create user with hashed password.

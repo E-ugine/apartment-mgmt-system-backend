@@ -82,6 +82,6 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_objects(self):
+    def get_object(self):
         #return the current user
         return self.request.user   
