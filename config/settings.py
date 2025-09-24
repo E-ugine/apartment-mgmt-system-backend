@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'accounts',
     'properties',
     'payments',
+    'notices',
 ]
 
 MIDDLEWARE = [
