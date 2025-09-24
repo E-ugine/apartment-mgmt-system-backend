@@ -10,6 +10,7 @@ class User(AbstractUser):
     ]
 
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='tenant')
+    email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15,blank=True, null=True, help_text='contact phone number')
     is_verified = models.BooleanField(default=False, help_text="Whether the tenant has been verified by an agent")
     created_at = models.DateTimeField(auto_now_add=True)
