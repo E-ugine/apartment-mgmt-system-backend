@@ -17,7 +17,7 @@ class User(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'accounts_users' #table name
+        db_table = 'accounts_users'
         ordering = ['-created_at'] #ordering. Start by the most recent
 
     def __str__(self):

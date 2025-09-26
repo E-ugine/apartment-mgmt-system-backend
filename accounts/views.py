@@ -11,7 +11,7 @@ class RegisterView(generics.CreateAPIView):
     """
     API endpoint for role based registration
     Registration rules:
-    1. Landlords/Agents: Created via Django Admin only
+    1. Landlords: Created by superuser only
     2.Caretakers: Created by landlords only
     3.Tenants: created by caretakers only
 
