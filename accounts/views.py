@@ -77,7 +77,6 @@ def login_view(request):
 class UserProfileView(generics.RetrieveUpdateAPIView):
     """
     View and update user profile
-    RetrieveUpdateView handles Get(retrieve) and PUT/PATCH(update) with its built-in pernmission checking
     """
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
