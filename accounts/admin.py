@@ -9,17 +9,13 @@ class UserAdmin(BaseUserAdmin):
     """This is the custom admin for our user model.
     It extends Django's built-in UserAdmin with our custom fields.
     """
-
-    #Fields to display in the user list
     list_display = ['username', 'email', 'role', 'is_verified', 'is_active', 'created_at']
 
     # Filters in the right sidebar
     list_filter = ['role', 'is_verified', 'is_active', 'created_at']
     
-    # Fields to search
     search_fields = ['username', 'email', 'first_name', 'last_name']
-    
-    # Default ordering
+
     ordering = ['-created_at']
 
     #Fields to show when editing a user
