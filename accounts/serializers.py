@@ -18,9 +18,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         }
 
     def validate(self,attrs):
-        """Custom validation method.
-        Called after individual field validation
-        """
         if attrs['password'] != attrs['password_confirm']:
             raise serializers.ValidationError("Passwords do not match!")
 
@@ -34,9 +31,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     
     def create(self, validated_data):
-        """
-        Create user with hashed password.
-        """
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
@@ -59,9 +53,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.Serializer):
     """
-    Serializer for user login.
-    Notice we're not using ModelSerializer here since this is not tied to any specific model
-    We're just validating credentials but not creating/updating a model 
+    Notice I'm not using ModelSerializer here since this is not tied to any specific model
+    I'm just validating credentials but not creating/updating a model 
     """
 
     username = serializers.CharField()

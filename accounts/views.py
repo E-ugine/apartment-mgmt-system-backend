@@ -31,7 +31,6 @@ class RegisterView(generics.CreateAPIView):
                 {'error':'Only landlords can create caretaker accounts'},
                 status=status.HTTP_403_FORBIDDEN
             )
-        #Landlords and agents must be created via Django admin
 
         if requested_role in ['landlord','agent']:
             return Response(
@@ -75,13 +74,8 @@ def login_view(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
-    """
-    View and update user profile
-    RetrieveUpdateView handles Get(retrieve) and PUT/PATCH(update) with its built-in pernmission checking
-    """
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        #return the current user
         return self.request.user   
