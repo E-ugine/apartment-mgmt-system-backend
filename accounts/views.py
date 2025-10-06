@@ -74,6 +74,9 @@ def login_view(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
+    """
+    View and update user profile
+    """
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
