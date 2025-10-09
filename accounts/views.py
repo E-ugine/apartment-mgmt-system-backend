@@ -1,9 +1,13 @@
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from .serializers import UserRegistrationSerializer, UserSerializer, LoginSerializer
+from rest_framework_simplejwt.views import TokenRefreshView as BaseTokenRefreshView
+from rest_framework_simplejwt.exceptions import InvalidToken
+from django.conf import settings
 
 User = get_user_model()
 
@@ -54,29 +58,99 @@ class RegisterView(generics.CreateAPIView):
             'message': f"{requested_role.title()} account created successfully"
         }, status=status.HTTP_201_CREATED)
     
-@api_view(['POST'])
-@permission_classes([permissions.AllowAny])
-def login_view(request):
+# @api_view(['POST'])
+# @permission_classes([permissions.AllowAny])
+# def login_view(request):
 
-    serializer = LoginSerializer(data=request.data, context={'request':request})
+#     serializer = LoginSerializer(data=request.data, context={'request':request})
 
-    if serializer.is_valid():
+#     if serializer.is_valid():
+#         user = serializer.validated_data['user']
+
+#         #Generate JWT tokens
+#         refresh = RefreshToken.for_user(user)
+
+#         return Response({
+#             'user': UserSerializer(user).data,
+#             'refresh': str(refresh),
+#             'access': str(refresh.access_token)
+#         })
+#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LoginView(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+
+        serializer = self.get_serializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        
         user = serializer.validated_data['user']
 
-        #Generate JWT tokens
+        # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
 
-        return Response({
+        response = Response({
             'user': UserSerializer(user).data,
-            'refresh': str(refresh),
-            'access': str(refresh.access_token)
-        })
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            'message': 'Login successful'
+        }, status=status.HTTP_200_OK)
 
+        response.set_cookie(
+            key=settings.SIMPLE_JWT.get('AUTH_COOKIE', 'access_token'),
+            value=access_token,
+            max_age=int(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds()),
+            secure=settings.SIMPLE_JWT.get('AUTH_COOKIE_SECURE', not settings.DEBUG),
+            httponly=settings.SIMPLE_JWT.get('AUTH_COOKIE_HTTP_ONLY', True),
+            samesite=settings.SIMPLE_JWT.get('AUTH_COOKIE_SAMESITE', 'Lax'),
+            path=settings.SIMPLE_JWT.get('AUTH_COOKIE_PATH', '/'),
+        )
+
+        response.set_cookie(
+            key=settings.SIMPLE_JWT.get('AUTH_COOKIE_REFRESH', 'refresh_token'),
+            value=refresh_token,
+            max_age=int(settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()),
+            secure=settings.SIMPLE_JWT.get('AUTH_COOKIE_SECURE', not settings.DEBUG),
+            httponly=settings.SIMPLE_JWT.get('AUTH_COOKIE_HTTP_ONLY', True),
+            samesite=settings.SIMPLE_JWT.get('AUTH_COOKIE_SAMESITE', 'Lax'),
+            path=settings.SIMPLE_JWT.get('AUTH_COOKIE_PATH', '/'),
+        )
+
+        return response
+
+class LogoutView(generics.GenericAPIView):
+    """ 
+    Since tokens are stored in httpOnly cookies, JavaScript cannot delete them.
+    This endpoint instructs the browser to delete the cookies by setting them
+    with empty values and past expiry dates.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        
+        response = Response({
+            'message': 'Logout successful'
+        }, status=status.HTTP_200_OK)
+
+        # Clear access token cookie
+        response.delete_cookie(
+            key=settings.SIMPLE_JWT.get('AUTH_COOKIE', 'access_token'),
+            path=settings.SIMPLE_JWT.get('AUTH_COOKIE_PATH', '/'),
+            samesite=settings.SIMPLE_JWT.get('AUTH_COOKIE_SAMESITE', 'Lax'),
+        )
+
+        # Clear refresh token cookie
+        response.delete_cookie(
+            key=settings.SIMPLE_JWT.get('AUTH_COOKIE_REFRESH', 'refresh_token'),
+            path=settings.SIMPLE_JWT.get('AUTH_COOKIE_PATH', '/'),
+            samesite=settings.SIMPLE_JWT.get('AUTH_COOKIE_SAMESITE', 'Lax'),
+        )
+
+        return response    
+        
 class UserProfileView(generics.RetrieveUpdateAPIView):
-    """
-    View and update user profile
-    """
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
