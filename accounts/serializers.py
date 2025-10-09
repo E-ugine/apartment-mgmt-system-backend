@@ -18,13 +18,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         }
 
     def validate(self,attrs):
-        """Custom validation method.
-        Called after individual field validation
-        """
         if attrs['password'] != attrs['password_confirm']:
             raise serializers.ValidationError("Passwords do not match!")
 
-        attrs.pop('password_confirm', None)    #We remove this since it's not required for user creation
+        attrs.pop('password_confirm', None) 
         return attrs
     
     def validate_email(self, value):
@@ -34,9 +31,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     
     def create(self, validated_data):
-        """
-        Create user with hashed password.
-        """
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
@@ -49,7 +43,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
     
 class UserSerializer(serializers.ModelSerializer):
-    """Used to retrieve and update user data"""
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name',
