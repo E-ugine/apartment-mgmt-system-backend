@@ -139,6 +139,7 @@ class LogoutView(generics.GenericAPIView):
         response.delete_cookie(
             key=settings.SIMPLE_JWT.get('AUTH_COOKIE', 'access_token'),
             path=settings.SIMPLE_JWT.get('AUTH_COOKIE_PATH', '/'),
+             domain=settings.SIMPLE_JWT.get('AUTH_COOKIE_DOMAIN', None),
             samesite=settings.SIMPLE_JWT.get('AUTH_COOKIE_SAMESITE', 'Lax'),
         )
 
@@ -146,6 +147,7 @@ class LogoutView(generics.GenericAPIView):
         response.delete_cookie(
             key=settings.SIMPLE_JWT.get('AUTH_COOKIE_REFRESH', 'refresh_token'),
             path=settings.SIMPLE_JWT.get('AUTH_COOKIE_PATH', '/'),
+             domain=settings.SIMPLE_JWT.get('AUTH_COOKIE_DOMAIN', None),
             samesite=settings.SIMPLE_JWT.get('AUTH_COOKIE_SAMESITE', 'Lax'),
         )
 
