@@ -6,7 +6,7 @@ from django.conf import settings
 class CookieJWTAuthentication(JWTAuthentication):
     
     def authenticate(self, request): 
-        cookie_name = getattr(settings, 'SIMPLE_JWT', {}).get('AUTH_COOKIE', 'access_token')
+        cookie_name = getattr(settings, 'SIMPLE_JWT', {}).get('AUTH_COOKIE_ACCESS', 'access_token')
 
         raw_token = request.COOKIES.get(cookie_name)
         
