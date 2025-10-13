@@ -52,9 +52,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.Serializer):
     """
-    Serializer for user login.
-    Notice we're not using ModelSerializer here since this is not tied to any specific model
-    We're just validating credentials but not creating/updating a model 
+    Notice I'm not using ModelSerializer here since this is not tied to any specific model
+    I'm just validating credentials but not creating/updating a model 
     """
 
     username = serializers.CharField()
