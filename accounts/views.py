@@ -173,7 +173,6 @@ class TokenRefreshView(BaseTokenRefreshView):
                 'error': 'Refresh token not found in cookies'
             }, status=status.HTTP_401_UNAUTHORIZED)
         
-        # Add refresh token to request data
         request.data['refresh'] = refresh_token
         
         response = super().post(request, *args, **kwargs)
