@@ -35,6 +35,7 @@ class RegisterView(generics.CreateAPIView):
                 {'error':'Only landlords can create caretaker accounts'},
                 status=status.HTTP_403_FORBIDDEN
             )
+        #Landlords and agents must be created via Django admin
 
         if requested_role in ['landlord','agent']:
             return Response(
@@ -157,4 +158,54 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        return self.request.user   
+        return self.request.user
+
+class TokenRefreshView(BaseTokenRefreshView):
+    
+    def post(self, request, *args, **kwargs):
+        
+        refresh_token = request.COOKIES.get(
+            settings.SIMPLE_JWT.get('AUTH_COOKIE_REFRESH', 'refresh_token')
+        )
+        
+        if refresh_token is None:
+            return Response({
+                'error': 'Refresh token not found in cookies'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+        
+        request.data['refresh'] = refresh_token
+        
+        response = super().post(request, *args, **kwargs)
+        
+        if response.status_code == 200:
+            # Extract new access token from response
+            access_token = response.data.get('access')
+            new_response = Response({
+                'message': 'Token refreshed successfully'
+            }, status=status.HTTP_200_OK)
+
+            new_response.set_cookie(
+                key=settings.SIMPLE_JWT.get('AUTH_COOKIE', 'access_token'),
+                value=access_token,
+                max_age=int(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds()),
+                secure=settings.SIMPLE_JWT.get('AUTH_COOKIE_SECURE', not settings.DEBUG),
+                httponly=settings.SIMPLE_JWT.get('AUTH_COOKIE_HTTP_ONLY', True),
+                samesite=settings.SIMPLE_JWT.get('AUTH_COOKIE_SAMESITE', 'Lax'),
+                path=settings.SIMPLE_JWT.get('AUTH_COOKIE_PATH', '/'),
+            )
+            
+            if 'refresh' in response.data:
+                new_refresh_token = response.data.get('refresh')
+                new_response.set_cookie(
+                    key=settings.SIMPLE_JWT.get('AUTH_COOKIE_REFRESH', 'refresh_token'),
+                    value=new_refresh_token,
+                    max_age=int(settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()),
+                    secure=settings.SIMPLE_JWT.get('AUTH_COOKIE_SECURE', not settings.DEBUG),
+                    httponly=settings.SIMPLE_JWT.get('AUTH_COOKIE_HTTP_ONLY', True),
+                    samesite=settings.SIMPLE_JWT.get('AUTH_COOKIE_SAMESITE', 'Lax'),
+                    path=settings.SIMPLE_JWT.get('AUTH_COOKIE_PATH', '/'),
+                )
+            
+            return new_response
+        
+        return response       
