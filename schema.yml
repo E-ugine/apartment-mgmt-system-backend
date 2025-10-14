@@ -1,0 +1,1318 @@
+openapi: 3.0.3
+info:
+  title: ApartmentHub API
+  version: 1.0.0
+  description: Will describe ApartmentHub API in a bit
+paths:
+  /api/accounts/auth/login/:
+    post:
+      operationId: accounts_auth_login_create
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+          description: ''
+  /api/accounts/auth/logout/:
+    post:
+      operationId: accounts_auth_logout_create
+      description: |-
+        Since tokens are stored in httpOnly cookies, JavaScript cannot delete them.
+        This endpoint instructs the browser to delete the cookies by setting them
+        with empty values and past expiry dates.
+      tags:
+      - accounts
+      responses:
+        '200':
+          description: No response body
+  /api/accounts/auth/register/:
+    post:
+      operationId: accounts_auth_register_create
+      description: |-
+        API endpoint for role based registration
+        Registration rules:
+        1. Landlords/Agents: Created via Django Admin only
+        2.Caretakers: Created by landlords only
+        3.Tenants: created by caretakers only
+
+        This is to maintain business logic and prevent unauthorized account creation
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRegistration'
+          description: ''
+  /api/accounts/auth/token/refresh/:
+    post:
+      operationId: accounts_auth_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/accounts/profile/:
+    get:
+      operationId: accounts_profile_retrieve
+      tags:
+      - accounts
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: accounts_profile_update
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: accounts_profile_partial_update
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/notices/:
+    get:
+      operationId: notices_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - notices
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNoticeListList'
+          description: ''
+    post:
+      operationId: notices_create
+      description: Override create to restrict to landlords and caretakers
+      tags:
+      - notices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NoticeCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NoticeCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NoticeCreate'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NoticeCreate'
+          description: ''
+  /api/notices/{id}/:
+    get:
+      operationId: notices_retrieve
+      description: Override retrieve to create read status when tenant views notice
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notices
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NoticeDetail'
+          description: ''
+    put:
+      operationId: notices_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NoticeUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NoticeUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NoticeUpdate'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NoticeUpdate'
+          description: ''
+    patch:
+      operationId: notices_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNoticeUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNoticeUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNoticeUpdate'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NoticeUpdate'
+          description: ''
+    delete:
+      operationId: notices_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notices
+      responses:
+        '204':
+          description: No response body
+  /api/notices/{id}/mark_as_read/:
+    post:
+      operationId: notices_mark_as_read_create
+      description: Mark a notice as read for current user
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NoticeDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NoticeDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NoticeDetail'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NoticeDetail'
+          description: ''
+  /api/notices/{id}/read_report/:
+    get:
+      operationId: notices_read_report_retrieve
+      description: |-
+        Get read status report for a specific notice.
+        Available to notice creators only.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - notices
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NoticeDetail'
+          description: ''
+  /api/notices/my_feed/:
+    get:
+      operationId: notices_my_feed_retrieve
+      description: |-
+        Personalized notice feed for current user.
+        Shows unread notices first, then read notices.
+      tags:
+      - notices
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NoticeDetail'
+          description: ''
+  /api/notices/stats/:
+    get:
+      operationId: notices_stats_retrieve
+      description: |-
+        Get notice statistics for current user.
+        Different stats for different roles.
+      tags:
+      - notices
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NoticeDetail'
+          description: ''
+  /api/payments/:
+    get:
+      operationId: payments_retrieve
+      tags:
+      - payments
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: payments_create
+      description: Override create to add business logic
+      tags:
+      - payments
+      responses:
+        '201':
+          description: No response body
+  /api/payments/{id}/:
+    get:
+      operationId: payments_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payments
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: payments_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payments
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: payments_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payments
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: payments_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payments
+      responses:
+        '204':
+          description: No response body
+  /api/payments/monthly_report/:
+    get:
+      operationId: payments_monthly_report_retrieve
+      description: |-
+        Generate monthly financial report.
+        Available to landlords only.
+      tags:
+      - payments
+      responses:
+        '200':
+          description: No response body
+  /api/payments/my_payments/:
+    get:
+      operationId: payments_my_payments_retrieve
+      description: Tenant-specific endpoint to view their payment history.
+      tags:
+      - payments
+      responses:
+        '200':
+          description: No response body
+  /api/payments/summary/:
+    get:
+      operationId: payments_summary_retrieve
+      description: |-
+        Get payment summary for current month.
+        Available to landlords and caretakers only.
+      tags:
+      - payments
+      responses:
+        '200':
+          description: No response body
+  /api/properties/:
+    get:
+      operationId: properties_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - properties
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPropertyListList'
+          description: ''
+    post:
+      operationId: properties_create
+      tags:
+      - properties
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PropertyDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PropertyDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PropertyDetail'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyDetail'
+          description: ''
+  /api/properties/{id}/:
+    get:
+      operationId: properties_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - properties
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyDetail'
+          description: ''
+    put:
+      operationId: properties_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - properties
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PropertyDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PropertyDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PropertyDetail'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyDetail'
+          description: ''
+    patch:
+      operationId: properties_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - properties
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPropertyDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPropertyDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPropertyDetail'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyDetail'
+          description: ''
+    delete:
+      operationId: properties_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - properties
+      responses:
+        '204':
+          description: No response body
+  /api/units/:
+    get:
+      operationId: units_retrieve
+      description: ViewSet for Unit CRUD operations with role-based filtering
+      tags:
+      - units
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: units_create
+      description: ViewSet for Unit CRUD operations with role-based filtering
+      tags:
+      - units
+      responses:
+        '201':
+          description: No response body
+  /api/units/{id}/:
+    get:
+      operationId: units_retrieve_2
+      description: ViewSet for Unit CRUD operations with role-based filtering
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - units
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: units_update
+      description: ViewSet for Unit CRUD operations with role-based filtering
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - units
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: units_partial_update
+      description: ViewSet for Unit CRUD operations with role-based filtering
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - units
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: units_destroy
+      description: ViewSet for Unit CRUD operations with role-based filtering
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - units
+      responses:
+        '204':
+          description: No response body
+  /api/units/{id}/assign_tenant/:
+    post:
+      operationId: units_assign_tenant_create
+      description: Custom endpoint to assign tenant to unit
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - units
+      responses:
+        '200':
+          description: No response body
+  /api/units/available/:
+    get:
+      operationId: units_available_retrieve
+      description: Custom endpoint to get available units
+      tags:
+      - units
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    AudienceTypeEnum:
+      enum:
+      - all_tenants
+      - property
+      - unit
+      - individual
+      - caretakers
+      - custom
+      type: string
+      description: |-
+        * `all_tenants` - All Tenants
+        * `property` - Specific Property
+        * `unit` - Specific Unit
+        * `individual` - Individual Tenant
+        * `caretakers` - All Caretakers
+        * `custom` - Custom Selection
+    Login:
+      type: object
+      description: |-
+        Notice I'm not using ModelSerializer here since this is not tied to any specific model
+        I'm just validating credentials but not creating/updating a model
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - password
+      - username
+    NoticeAttachment:
+      type: object
+      description: Serializer for notice file attachments
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        filename:
+          type: string
+          description: Original filename
+          maxLength: 255
+        file_url:
+          type: string
+          readOnly: true
+        file_size:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: File size in bytes
+        file_size_display:
+          type: string
+          readOnly: true
+        content_type:
+          type: string
+          description: MIME type of the file
+          maxLength: 100
+      required:
+      - content_type
+      - file_size
+      - file_size_display
+      - file_url
+      - filename
+      - id
+    NoticeCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Notice headline or subject
+          maxLength: 200
+        message:
+          type: string
+          description: Full notice content
+        priority:
+          $ref: '#/components/schemas/PriorityEnum'
+        audience_type:
+          $ref: '#/components/schemas/AudienceTypeEnum'
+        target_property:
+          type: integer
+          nullable: true
+          description: If audience_type is 'property'
+        target_unit:
+          type: integer
+          nullable: true
+          description: If audience_type is 'unit'
+        target_user:
+          type: integer
+          nullable: true
+          description: If audience_type is 'individual'
+        custom_recipients:
+          type: array
+          items:
+            type: integer
+          description: If audience_type is 'custom'
+        requires_acknowledgment:
+          type: boolean
+          description: Whether recipients must mark this as read
+        publish_date:
+          type: string
+          format: date-time
+          description: When this notice should become visible
+        expiry_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: When this notice should stop being visible
+      required:
+      - message
+      - title
+    NoticeDetail:
+      type: object
+      description: |-
+        Detailed serializer for notice viewing.
+        Includes full message and attachments.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          description: Notice headline or subject
+          maxLength: 200
+        message:
+          type: string
+          description: Full notice content
+        priority:
+          $ref: '#/components/schemas/PriorityEnum'
+        audience_type:
+          $ref: '#/components/schemas/AudienceTypeEnum'
+        requires_acknowledgment:
+          type: boolean
+          description: Whether recipients must mark this as read
+        publish_date:
+          type: string
+          format: date-time
+          description: When this notice should become visible
+        expiry_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: When this notice should stop being visible
+        created_by_name:
+          type: string
+          readOnly: true
+        is_read:
+          type: string
+          readOnly: true
+        read_at:
+          type: string
+          readOnly: true
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/NoticeAttachment'
+          readOnly: true
+        recipient_count:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - attachments
+      - created_at
+      - created_by_name
+      - id
+      - is_read
+      - message
+      - read_at
+      - recipient_count
+      - title
+      - updated_at
+    NoticeList:
+      type: object
+      description: Used in tenant/caretaker notice feeds.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          description: Notice headline or subject
+          maxLength: 200
+        priority:
+          $ref: '#/components/schemas/PriorityEnum'
+        audience_type:
+          $ref: '#/components/schemas/AudienceTypeEnum'
+        requires_acknowledgment:
+          type: boolean
+          description: Whether recipients must mark this as read
+        publish_date:
+          type: string
+          format: date-time
+          description: When this notice should become visible
+        expiry_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: When this notice should stop being visible
+        is_active:
+          type: boolean
+          readOnly: true
+        created_by_name:
+          type: string
+          readOnly: true
+        is_read:
+          type: string
+          readOnly: true
+        time_ago:
+          type: string
+          readOnly: true
+        attachment_count:
+          type: string
+          readOnly: true
+      required:
+      - attachment_count
+      - created_by_name
+      - id
+      - is_active
+      - is_read
+      - time_ago
+      - title
+    NoticeUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Notice headline or subject
+          maxLength: 200
+        message:
+          type: string
+          description: Full notice content
+        priority:
+          $ref: '#/components/schemas/PriorityEnum'
+        requires_acknowledgment:
+          type: boolean
+          description: Whether recipients must mark this as read
+        is_published:
+          type: boolean
+        expiry_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: When this notice should stop being visible
+      required:
+      - message
+      - title
+    PaginatedNoticeListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/NoticeList'
+    PaginatedPropertyListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyList'
+    PatchedNoticeUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Notice headline or subject
+          maxLength: 200
+        message:
+          type: string
+          description: Full notice content
+        priority:
+          $ref: '#/components/schemas/PriorityEnum'
+        requires_acknowledgment:
+          type: boolean
+          description: Whether recipients must mark this as read
+        is_published:
+          type: boolean
+        expiry_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: When this notice should stop being visible
+    PatchedPropertyDetail:
+      type: object
+      description: |-
+        Detailed serializer with nested relationships.
+        Used for retrieve/create/update operations.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Name of the property(e.g Villa Rosa Gardens)
+          maxLength: 200
+        address:
+          type: string
+        description:
+          type: string
+          nullable: true
+          description: Additional text about the property
+        landlord:
+          type: integer
+        landlord_name:
+          type: string
+          readOnly: true
+        caretakers:
+          type: array
+          items:
+            type: integer
+        caretaker_names:
+          type: string
+          readOnly: true
+        total_units:
+          type: integer
+          readOnly: true
+          description: Total number of units in this property
+        units:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone:
+          type: string
+          nullable: true
+          description: contact phone number
+          maxLength: 15
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+        is_verified:
+          type: boolean
+          readOnly: true
+          description: Whether the tenant has been verified by an agent
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PriorityEnum:
+      enum:
+      - low
+      - normal
+      - high
+      - urgent
+      type: string
+      description: |-
+        * `low` - Low
+        * `normal` - Normal
+        * `high` - High
+        * `urgent` - Urgent
+    PropertyDetail:
+      type: object
+      description: |-
+        Detailed serializer with nested relationships.
+        Used for retrieve/create/update operations.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Name of the property(e.g Villa Rosa Gardens)
+          maxLength: 200
+        address:
+          type: string
+        description:
+          type: string
+          nullable: true
+          description: Additional text about the property
+        landlord:
+          type: integer
+        landlord_name:
+          type: string
+          readOnly: true
+        caretakers:
+          type: array
+          items:
+            type: integer
+        caretaker_names:
+          type: string
+          readOnly: true
+        total_units:
+          type: integer
+          readOnly: true
+          description: Total number of units in this property
+        units:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - caretaker_names
+      - created_at
+      - id
+      - landlord
+      - landlord_name
+      - name
+      - total_units
+      - units
+      - updated_at
+    PropertyList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: Name of the property(e.g Villa Rosa Gardens)
+          maxLength: 200
+        address:
+          type: string
+        landlord_name:
+          type: string
+          readOnly: true
+        total_units:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Total number of units in this property
+        caretaker_count:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - caretaker_count
+      - created_at
+      - id
+      - landlord_name
+      - name
+    RoleEnum:
+      enum:
+      - landlord
+      - caretaker
+      - tenant
+      - agent
+      type: string
+      description: |-
+        * `landlord` - Landlord
+        * `caretaker` - Caretaker
+        * `tenant` - Tenant
+        * `agent` - Agent
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone:
+          type: string
+          nullable: true
+          description: contact phone number
+          maxLength: 15
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+        is_verified:
+          type: boolean
+          readOnly: true
+          description: Whether the tenant has been verified by an agent
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - email
+      - id
+      - is_verified
+      - role
+      - username
+    UserRegistration:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+        password_confirm:
+          type: string
+          writeOnly: true
+        phone:
+          type: string
+          nullable: true
+          description: contact phone number
+          maxLength: 15
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+      required:
+      - email
+      - password
+      - password_confirm
+      - role
+      - username

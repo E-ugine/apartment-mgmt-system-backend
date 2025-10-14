@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'properties',
     'payments',
     'notices',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -102,18 +103,20 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    ## Settings ending in "CLASS" → Single string (no list)
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',        
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    
+    ## Settings ending in "CLASSES" (plural). List of strings
+    'DEFAULT_AUTHENTICATION_CLASSES': [                            
         'accounts.authentication.CookieJWTAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
+    'DEFAULT_PERMISSION_CLASSES': [                      
         'rest_framework.permissions.IsAuthenticated',
     ],
-    'DEFAULT_RENDERER_CLASSES': [
+    'DEFAULT_RENDERER_CLASSES': [                     
         'rest_framework.renderers.JSONRenderer',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20
 }
 
 SIMPLE_JWT = {
@@ -130,6 +133,12 @@ SIMPLE_JWT = {
     "AUTH_COOKIE_SAMESITE": "Lax",  
     # "AUTH_COOKIE_REFRESH_PATH": "/accounts/auth/",
 }
+
+SPECTACULAR_SETTINGS = {
+        'TITLE': 'ApartmentHub API',
+        'DESCRIPTION': 'Will describe ApartmentHub API in a bit',
+        'VERSION': '1.0.0',
+    }
 
  
 # Password validation
