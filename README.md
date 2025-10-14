@@ -1,8 +1,8 @@
-# 🏢 Apartment Management System
+# Apartment Management System
 
 A comprehensive property management platform built with Django and Django REST Framework, featuring role-based access control, secure authentication, and complete property, payment, and communication management.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Features](#features)
 - [Tech Stack](#tech-stack)
@@ -43,7 +43,7 @@ A comprehensive property management platform built with Django and Django REST F
 - ✅ Financial reporting and analytics
 - ✅ Read status tracking for communications
 
-## 🛠 Tech Stack
+## Tech Stack
 
 **Backend:**
 - Python 3.11+
@@ -59,7 +59,7 @@ A comprehensive property management platform built with Django and Django REST F
 - `psycopg2-binary` - PostgreSQL adapter
 - `python-decouple` - Environment configuration
 
-## 🏗 System Architecture
+## System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -84,7 +84,7 @@ A comprehensive property management platform built with Django and Django REST F
               └───────────────────────┘
 ```
 
-## 🚀 Installation
+## Installation
 
 ### Prerequisites
 - Python 3.11 or higher
@@ -164,7 +164,7 @@ python manage.py runserver
 
 Visit `http://127.0.0.1:8000/admin/` to access the admin panel.
 
-## ⚙️ Configuration
+## Configuration
 
 ### Security Settings (Production)
 
@@ -193,7 +193,7 @@ Current settings (can be adjusted):
 - Token Rotation: Enabled
 - Cookie Security: httpOnly, Secure (in production), SameSite=Lax
 
-## 📚 API Documentation
+## API Documentation
 
 ### Base URL
 ```
@@ -411,7 +411,7 @@ Authorization: Required (Tenant)
 Response: 200 OK
 ```
 
-## 🔐 Security Features
+## Security Features
 
 ### XSS Protection
 - **HttpOnly Cookies**: JWT tokens cannot be accessed by JavaScript
@@ -478,7 +478,7 @@ Response: 200 OK
 - Modify payments or properties
 
 
-## 🗄 Database Schema
+## Database Schema
 
 ### Core Models
 
@@ -513,7 +513,7 @@ Response: 200 OK
 
 See [Database ERD](https://db) for complete schema.
 
-## 🧪 Testing
+## Testing
 
 ### Run Tests ##Yet to be implemented
 ```bash
@@ -548,7 +548,7 @@ curl -X GET http://127.0.0.1:8000/api/properties/ \
 3. Cookies will be stored automatically
 4. Subsequent requests will include cookies
 
-## 🚀 Deployment
+## Deployment
 
 ### Docker Deployment (Recommended)
 
@@ -613,7 +613,7 @@ volumes:
 - [ ] Configure reverse proxy (Nginx)
 - [ ] Set up CI/CD pipeline
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -628,24 +628,24 @@ Contributions are welcome! Please follow these steps:
 - Write docstrings for all functions/classes
 - Update documentation as needed
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 Author
+## Author
 
 **Your Name**
 - GitHub: [E-ugine](https://github.com/E-ugine)
 - LinkedIn: [eugine-agolla](https://www.linkedin.com/in/eugine-agolla/)
 - Email: agollaeugine@gmail.com
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Django and Django REST Framework communities
 - SimpleJWT for authentication foundation
 - All contributors and testers
 
-## 📞 Support
+## Support
 
 For support, email agollaeugine@gmail.com or open an issue in the GitHub repository.
 

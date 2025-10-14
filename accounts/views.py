@@ -35,7 +35,7 @@ class RegisterView(generics.CreateAPIView):
                 {'error':'Only landlords can create caretaker accounts'},
                 status=status.HTTP_403_FORBIDDEN
             )
-        #Landlords and agents must be created via Django admin
+        #Landlords must be created via Django admin
 
         if requested_role in ['landlord','agent']:
             return Response(
