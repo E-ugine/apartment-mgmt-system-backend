@@ -1,6 +1,6 @@
 # Apartment Management System
 
-A comprehensive property management platform built with Django and Django REST Framework, featuring role-based access control, secure authentication, and complete property, payment, and communication management.
+A full-featured property management platform built with Django and Django REST Framework to simplify property, payment, and communication management. It was designed to provide secure authentication and role-based access control for landlords, caretakers, and tenants, improving transparency and efficiency in property operations.
 
 ## Table of Contents
 
